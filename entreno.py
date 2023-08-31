@@ -3,12 +3,31 @@ import torch
 from tqdm import tqdm
 import numpy as np
 import os
-from tokenizer import Tokenizer 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
+all_characters = string.printable + "ñÑáÁéÉíÍóÓúÚ¿?()¡"
+class Tokenizer():
+    def __init__(self):
+        self.all_characters = all_characters
+        self.n_characters = len(self.all_characters)
+
+    def text_to_seq(self, string):
+        seq = []
+        for c in range(len(string)):
+            try:
+                seq.append(self.all_characters.index(string[c]))
+            except:
+                continue
+        return seq
+
+    def seq_to_text(self, seq):
+        text = ''
+        for c in range(len(seq)):
+            text += self.all_characters[seq[c]]
+        return text
 
 @app.route('/generate_text', methods=['POST'])
 def generate_text():
@@ -19,7 +38,7 @@ def generate_text():
     f = open("canciones.txt", "r", encoding='utf-8')
     text = f.read()
 
-    all_characters = string.printable + "ñÑáÁéÉíÍóÓúÚ¿?()¡"
+    
 
     #tokenizacion
     tokenizer = Tokenizer()
@@ -162,7 +181,7 @@ def generate_text():
       model.eval()
     else:
       print('hay que entrenar el modelo')
-      fit(model, dataloader, epochs=50)
+      fit(model, dataloader, epochs=90)
 
     #coifica el contexto inicial
     X_new = seed_text
@@ -171,7 +190,7 @@ def generate_text():
     y_pred = torch.argmax(y_pred, axis=1)[0].item()
     tokenizer.seq_to_text([y_pred])
 
-    #generar las 500 palabras
+    #generar las 300 caracteres
     temp=1
     for i in range(300):
       X_new_encoded = tokenizer.text_to_seq(X_new[-100:])
