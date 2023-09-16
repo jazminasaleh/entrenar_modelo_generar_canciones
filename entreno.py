@@ -163,7 +163,7 @@ def generate_text():
                     bar.set_description(f"val_loss {np.mean(val_loss):.5f}")
             print(f"Epoch {epoch}/{epochs} loss {np.mean(train_loss):.5f} val_loss {np.mean(val_loss):.5f}")
             if epoch == epochs:
-              torch.save(model.state_dict(), "modelo_entrenado_ultima_epoca.pth")
+              torch.save(model.state_dict(), "modelo_entrenado_ultima_epoca120_ventanas200.pth")
 
     def predict(model, X):
       model.eval() 
@@ -175,13 +175,19 @@ def generate_text():
     model = CharRNN(input_size=tokenizer.n_characters)
 
     #mirar si el modelo ya esta entrenado
-    if os.path.exists("modelo_entrenado_ultima_epoca.pth"):
-      print('modelo ya esta entrenado')
-      model.load_state_dict(torch.load("modelo_entrenado_ultima_epoca.pth"))
-      model.eval()
+    if os.path.exists("modelo_entrenado_ultima_epoca120_ventanas200.pth"):
+        print('El modelo ya está entrenado.')
+        try:
+            if torch.cuda.is_available():
+                model.load_state_dict(torch.load("modelo_entrenado_ultima_epoca120_ventanas200.pth"))
+            else:
+                model.load_state_dict(torch.load("modelo_entrenado_ultima_epoca120_ventanas200.pth", map_location=torch.device('cpu')))
+            model.eval()
+        except Exception as e:
+            print(f"Error al cargar el modelo: {str(e)}")
     else:
-      print('hay que entrenar el modelo')
-      fit(model, dataloader, epochs=90)
+        print('Hay que entrenar el modelo')
+        fit(model, dataloader, epochs=150)
 
     #coifica el contexto inicial
     X_new = seed_text
