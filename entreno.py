@@ -5,6 +5,7 @@ import numpy as np
 import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import openai
 
 app = Flask(__name__)
 CORS(app)
@@ -208,6 +209,22 @@ def generate_text():
 
     print('este es el texto generado:')
     print(X_new)
+    print('Este es el corregido')
+    #chatgpt
+    openai.api_key = "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"
+    prompt = "me podrias corregir este texto: "+ X_new
+    mensaje = [
+    {'role': 'user', 'content': prompt}
+    ]   
+    textoCorregido = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages= mensaje,
+        temperature = 0.8,
+        max_tokens=300
+    )
+
+    print(textoCorregido.choices[0].message["content"])
+
 
     #Guradr el texto en el archivo
     with open("texto_generado.txt", "w", encoding="utf-8") as output_file:
