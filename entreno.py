@@ -211,7 +211,7 @@ def generate_text():
     print(X_new)
     print('Este es el corregido')
     #chatgpt
-    openai.api_key = "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"
+    openai.api_key = "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"
     prompt = "me podrias corregir este texto: "+ X_new
     mensaje = [
     {'role': 'user', 'content': prompt}
@@ -231,7 +231,7 @@ def generate_text():
         output_file.write(X_new)
         print("Texto generado guardado en 'texto_generado.txt'")
 
-    return jsonify({'generated_text': X_new})
+    return jsonify({'generated_text': X_new, 'corrected_text': textoCorregido.choices[0].message["content"]})
 
 if __name__ == '__main__':
     app.run()
