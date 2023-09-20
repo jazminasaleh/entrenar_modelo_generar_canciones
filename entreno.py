@@ -211,7 +211,7 @@ def generate_text():
     print(X_new)
     print('Este es el corregido')
     #chatgpt
-    openai.api_key = "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"
+    openai.api_key = "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"
     prompt = "me podrias corregir este texto: "+ X_new
     mensaje = [
     {'role': 'user', 'content': prompt}
